@@ -1,0 +1,40 @@
+@import '../../../variables.scss';
+
+.page {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  &>.header,
+  &>.footer,
+  &>.breadcrumbs {
+    flex-shrink: 0;
+  }
+
+  &>.breadcrumbs {
+    height: 30px;
+    display: flex;
+    align-items: center;
+    padding: 0 $page-layout-margin;
+    border-bottom: 1px solid $borders-color;
+
+    &>app-page-breadcrumb+app-page-breadcrumb {
+      &:before {
+        content: '/';
+        display: inline-block;
+        margin: 0 5px;
+        color: $primary-color;
+      }
+    }
+  }
+
+  &>.content {
+    position: relative;
+    margin: $page-layout-margin;
+    flex-grow: 1;
+    overflow-x: hidden;
+    overflow-y: auto;
+
+    display: flex;
+    flex-direction: column;
+  }
+}

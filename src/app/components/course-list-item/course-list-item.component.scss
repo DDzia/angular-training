@@ -1,0 +1,48 @@
+.course {
+  display: flex;
+  flex-direction: row;
+  background-color: #f7f7f7;
+
+  padding: 10px;
+  // border: 1px solid red;
+
+  &>.main {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+
+    &>.top {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      flex-shrink: 0;
+
+      &>.title {
+        margin: 0 10px 0 0;
+      }
+
+      &>.right {
+        &>.created {
+          margin-left: 10px;
+        }
+      }
+    }
+
+    &>.desc {
+      flex-grow: 1;
+      margin: 10px 0;
+      overflow: hidden;
+    }
+  }
+
+  &>.buttons {
+    margin: 0 10px;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+
+    &>button+button {
+      margin-top: 10px;
+    }
+  }
+}

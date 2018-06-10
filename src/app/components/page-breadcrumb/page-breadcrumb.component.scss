@@ -1,0 +1,17 @@
+@import '../../../variables.scss';
+
+.breadcrumb {
+  display: inline-block;
+  color: $primary-color;
+  &>a {
+    color: $primary-color;
+    text-decoration: none;
+    &:active,
+    &:visited {
+      color: $primary-color;
+    }
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}

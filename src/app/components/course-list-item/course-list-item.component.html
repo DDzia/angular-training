@@ -1,0 +1,21 @@
+<div class="course">
+  <div class="main">
+    <div class="top">
+      <h3 class="title" [innerHTML]="course.title"></h3>
+
+      <div class="right">
+        <span class="duration" [innerHTML]="course.durationMin | minPostfix"></span>
+        <span class="created" [innerHTML]="course.creationDate | date: 'dd.MM.yyyy'"></span>
+      </div>
+    </div>
+    <p
+      class="desc"
+      [innerHTML]="course.description | truncateText: 80">
+    </p>
+  </div>
+
+  <div class="buttons">
+    <button>Edit</button>
+    <button>Delete</button>
+  </div>
+</div>

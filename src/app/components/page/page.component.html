@@ -1,0 +1,14 @@
+<main class="page">
+  <div class="header">
+    <app-page-header></app-page-header>
+  </div>
+  <div *ngIf="breadcrumbs?.length" class="breadcrumbs">
+    <ng-content select="app-page-breadcrumb"></ng-content>
+  </div>
+  <div class="content">
+    <ng-content></ng-content>
+  </div>
+  <div class="footer">
+    <app-page-footer></app-page-footer>
+  </div>
+</main>

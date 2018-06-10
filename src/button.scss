@@ -1,0 +1,16 @@
+@import './variables.scss';
+
+button {
+  display: inline-block;
+  border-width: 0;
+  padding: 0 1em;
+  height: $btn-height;
+  background-color: $primary-color;
+  color: white;
+  outline: none;
+  cursor: pointer;
+
+  &[disabled] {
+    background-color: #c0c0c0;
+  }
+}

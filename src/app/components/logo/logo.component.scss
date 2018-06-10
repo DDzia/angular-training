@@ -1,0 +1,10 @@
+$logo-size: 50px;
+
+.logo {
+  display: inline-block;
+  height: $logo-size;
+  width: $logo-size;
+  background-size: $logo-size;
+  background-repeat: no-repeat;
+  background-image: url('./assets/logo.png');
+}

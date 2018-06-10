@@ -1,0 +1,25 @@
+@import '../../../variables.scss';
+
+.page-header {
+  padding: $page-layout-margin/2 $page-layout-margin;
+  line-height: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid $borders-color;
+
+  &>.left {
+    display: flex;
+    align-items: center;
+    &>.logo-title {
+      display: inline-block;
+      margin: 0 10px;
+    }
+  }
+
+  &>.right {
+    .logout-btn {
+      margin-left: 10px;
+    }
+  }
+}

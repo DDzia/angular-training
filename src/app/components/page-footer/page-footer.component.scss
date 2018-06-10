@@ -1,0 +1,10 @@
+@import '../../../variables.scss';
+
+.page-footer {
+  border-top: 1px solid $borders-color;
+  height: 30px;
+  padding: 0 $page-layout-margin;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
