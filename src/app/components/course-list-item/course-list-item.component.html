@@ -1,21 +1,17 @@
 <div class="course">
   <div class="main">
     <div class="top">
-      <h3 class="title" [innerHTML]="course.title"></h3>
-
+      <h3 class="title">{{course.title}}</h3>
       <div class="right">
-        <span class="duration" [innerHTML]="course.durationMin | minPostfix"></span>
-        <span class="created" [innerHTML]="course.creationDate | date: 'dd.MM.yyyy'"></span>
+        <span class="duration">{{course.durationMin | minPostfix}}</span>
+        <span class="created">{{course.creationDate | date: 'dd.MM.yyyy'}}</span>
       </div>
     </div>
-    <p
-      class="desc"
-      [innerHTML]="course.description | truncateText: 80">
-    </p>
+    <p class="desc">{{course.description | truncateText: 80}}</p>
   </div>
 
   <div class="buttons">
-    <button>Edit</button>
-    <button>Delete</button>
+    <button (click)="onEditCourse()">Edit</button>
+    <button (click)="onDeleteBtnClick()">Delete</button>
   </div>
 </div>

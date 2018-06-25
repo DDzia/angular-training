@@ -5,11 +5,11 @@ import { Component, OnInit } from '@angular/core';
   templateUrl: './page-header.component.html',
   styleUrls: ['./page-header.component.scss']
 })
-export class PageHeaderComponent implements OnInit {
+export class PageHeaderComponent {
 
   constructor() { }
 
-  ngOnInit() {
+  logout() {
+    console.log('logout');
   }
-
 }

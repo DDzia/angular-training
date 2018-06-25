@@ -1,7 +1,9 @@
-import { Component, ViewEncapsulation } from '@angular/core';
+import { of, BehaviorSubject } from 'rxjs';
+import { Component, ViewEncapsulation, OnInit, OnDestroy } from '@angular/core';
+import { Latest } from 'dd-rx-awesome';
+
 import { IBreadcrumb } from '../../components/page-breadcrumb/ibreadcrumb';
-import { of } from 'rxjs';
-import { Course } from '../../models';
+import { ICourse, Course } from '../../models/course';
 
 @Component({
   selector: 'app-overview-page',
@@ -9,7 +11,7 @@ import { Course } from '../../models';
   styleUrls: ['./overview-page.component.scss'],
   encapsulation: ViewEncapsulation.None
 })
-export class OverviewPageComponent {
+export class OverviewPageComponent implements OnInit, OnDestroy {
   private static readonly itemLoremDesc = `
   «Дорожная карта» подписана в рамках достигнутых ранее правительствами двух стран договоренностей и рассчитана на 2018 год.
   В ней прописаны мероприятия, которые будут способствовать «скорейшему урегулированию ситуации»
@@ -50,14 +52,33 @@ export class OverviewPageComponent {
     }
   ];
 
-  items$ = of(
-    Array.from(Array(1000).keys()).map((x) => {
-      const c = new Course();
-      c.id = x;
-      c.title = x.toString();
-      c.durationMin = Math.floor(Math.random() * (100 - 1)) + 1;
-      c.description = OverviewPageComponent.itemLoremDesc;
-      return c;
-    })
-  );
+  readonly items$ = new BehaviorSubject<ICourse[]>([]);
+
+  ngOnInit(): void {
+    this.items$.next(
+      Array.from(Array(1000).keys()).map((x) => {
+        const c = new Course();
+        c.id = x;
+        c.title = x.toString();
+        c.durationMin = Math.floor(Math.random() * (100 - 1)) + 1;
+        c.description = OverviewPageComponent.itemLoremDesc;
+        return c;
+      })
+    );
+  }
+
+  ngOnDestroy(): void {
+    this.items$.unsubscribe();
+  }
+
+  onDeleteCourse(courceToDelete: ICourse) {
+    const actualCourses = Latest.tryGet(this.items$, []).filter((x) => x !== courceToDelete);
+    this.items$.next(actualCourses);
+
+    console.log(`Course has been deleted: ${JSON.stringify(courceToDelete)}`);
+  }
+
+  onLoadMore() {
+    console.log('load more click');
+  }
 }

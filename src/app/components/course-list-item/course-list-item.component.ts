@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, EventEmitter, Output } from '@angular/core';
 import { ICourse } from '../../models/course';
 
 @Component({
@@ -8,4 +8,14 @@ import { ICourse } from '../../models/course';
 })
 export class CourseListItemComponent {
   @Input() course: ICourse;
+
+  @Output() delete = new EventEmitter<ICourse>();
+
+  onDeleteBtnClick() {
+    this.delete.emit(this.course);
+  }
+
+  onEditCourse() {
+    console.log(`edit course with ID: ${this.course.id}`);
+  }
 }
