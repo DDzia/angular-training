@@ -1,15 +1,14 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 
 @Component({
   selector: 'app-search-cource-form',
   templateUrl: './search-cource-form.component.html',
   styleUrls: ['./search-cource-form.component.scss']
 })
-export class SearchCourceFormComponent implements OnInit {
+export class SearchCourceFormComponent {
+  searchSegment = '';
 
-  constructor() { }
-
-  ngOnInit() {
+  onSearch() {
+    console.log(`on search: '${this.searchSegment}'`);
   }
-
 }
