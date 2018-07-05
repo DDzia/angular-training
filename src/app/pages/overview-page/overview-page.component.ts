@@ -1,6 +1,5 @@
 import { of, BehaviorSubject } from 'rxjs';
 import { Component, ViewEncapsulation, OnInit, OnDestroy } from '@angular/core';
-import { Latest } from 'dd-rx-awesome';
 
 import { IBreadcrumb } from '../../components/page-breadcrumb/ibreadcrumb';
 import { ICourse, Course } from '../../models/course';
@@ -72,7 +71,7 @@ export class OverviewPageComponent implements OnInit, OnDestroy {
   }
 
   onDeleteCourse(courceToDelete: ICourse) {
-    const actualCourses = Latest.tryGet(this.items$, []).filter((x) => x !== courceToDelete);
+    const actualCourses = this.items$.getValue().filter((x) => x !== courceToDelete);
     this.items$.next(actualCourses);
 
     console.log(`Course has been deleted: ${JSON.stringify(courceToDelete)}`);
