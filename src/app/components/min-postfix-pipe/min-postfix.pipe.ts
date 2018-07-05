@@ -6,6 +6,8 @@ import { Pipe, PipeTransform } from '@angular/core';
 })
 export class MinPostfixPipe implements PipeTransform {
   transform(value: any, ...args: any[]) {
-    return (value && `${value.toString()}min`) || '';
+    return typeof value === 'number' && !Number.isNaN(value) ?
+      `${value.toString()}min` :
+      value;
   }
 }
