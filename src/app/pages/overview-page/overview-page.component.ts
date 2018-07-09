@@ -1,8 +1,12 @@
-import { of, BehaviorSubject } from 'rxjs';
+import { of, BehaviorSubject, combineLatest } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { Component, ViewEncapsulation, OnInit, OnDestroy } from '@angular/core';
 
 import { IBreadcrumb } from '../../components/page-breadcrumb/ibreadcrumb';
 import { ICourse, Course } from '../../models/course';
+
+import { DurationPipe } from '../../components/duration-pipe/duration.pipe';
+import { DatePipe } from '@angular/common';
 
 @Component({
   selector: 'app-overview-page',
@@ -53,6 +57,19 @@ export class OverviewPageComponent implements OnInit, OnDestroy {
 
   readonly items$ = new BehaviorSubject<ICourse[]>([]);
 
+  readonly searchSegment$ = new BehaviorSubject('');
+
+  readonly viewItems$ = combineLatest(this.items$, this.searchSegment$)
+    .pipe(
+      map(([items, segment]) => [items, segment.trim().toLowerCase()] as [ICourse[], string]),
+      map(([items, segment]) => items.filter((x) => this.filterItem(segment, x)))
+    );
+
+  readonly dataAvailable$ = this.viewItems$.pipe(map((x) => !!x.length));
+
+  constructor(private readonly durationPipe: DurationPipe, private readonly dtPipe: DatePipe) {
+  }
+
   ngOnInit(): void {
     this.items$.next(
       Array.from(Array(1000).keys()).map((x) => {
@@ -61,13 +78,24 @@ export class OverviewPageComponent implements OnInit, OnDestroy {
         c.title = x.toString();
         c.durationMin = Math.floor(Math.random() * (100 - 1)) + 1;
         c.description = OverviewPageComponent.itemLoremDesc;
+        c.topRated = true;
+        c.creationDate = new Date(
+          this.getRandomInt(0, 3000),
+          this.getRandomInt(0, 11),
+          this.getRandomInt(1, 30)
+        );
         return c;
       })
     );
   }
 
+  getRandomInt(min, max) {
+    return Math.floor(Math.random() * (max - min)) + min;
+  }
+
   ngOnDestroy(): void {
     this.items$.unsubscribe();
+    this.searchSegment$.unsubscribe();
   }
 
   onDeleteCourse(courceToDelete: ICourse) {
@@ -79,5 +107,37 @@ export class OverviewPageComponent implements OnInit, OnDestroy {
 
   onLoadMore() {
     console.log('load more click');
+  }
+
+  onSearch(segment: string) {
+    this.searchSegment$.next(segment);
+  }
+
+  private filterItem(segment: string, item: ICourse) {
+    if (segment === '') {
+      return true;
+    }
+
+    if (item.title.toLowerCase().trim().indexOf(segment) !== -1) {
+      return true;
+    }
+
+    if (item.description.toLowerCase().trim().indexOf(segment) !== -1) {
+      return true;
+    }
+
+    if (item.id.toString() === segment) {
+      return true;
+    }
+
+    if (this.durationPipe.transform(item.durationMin).toString().toLowerCase().trim().indexOf(segment) !== -1) {
+      return true;
+    }
+
+    if (this.dtPipe.transform(item.creationDate).toString().toLowerCase().trim().indexOf(segment) !== -1) {
+      return true;
+    }
+
+    return false;
   }
 }

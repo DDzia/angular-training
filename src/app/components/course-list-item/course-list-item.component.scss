@@ -1,10 +1,15 @@
+$star-size: 20px;
+
 .course {
   display: flex;
   flex-direction: row;
   background-color: #f7f7f7;
 
   padding: 10px;
-  // border: 1px solid red;
+
+  &.top {
+    background-color: indianred;
+  }
 
   &>.main {
     flex-grow: 1;
@@ -14,14 +19,26 @@
     &>.top {
       display: flex;
       flex-direction: row;
-      justify-content: space-between;
+      justify-content: flex-start;
       flex-shrink: 0;
 
       &>.title {
         margin: 0 10px 0 0;
       }
 
+      &>.star {
+        background-image: url(./assets/star.svg);
+        background-size: $star-size;
+        display: inline-block;
+        width: $star-size;
+        height: $star-size;
+        align-self: flex-start;
+      }
+
       &>.right {
+        flex-grow: 1;
+        display: flex;
+        justify-content: flex-end;
         &>.created {
           margin-left: 10px;
         }
