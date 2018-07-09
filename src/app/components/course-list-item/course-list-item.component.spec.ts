@@ -4,7 +4,7 @@ import { BrowserModule, By } from '@angular/platform-browser';
 import { Component } from '@angular/core';
 
 import { CourseListItemComponent } from './course-list-item.component';
-import { MinPostfixPipe } from '../min-postfix-pipe/min-postfix.pipe';
+import { DurationPipe } from '../duration-pipe/duration.pipe';
 import { TruncateTextPipe } from '../truncate-text/truncate-text.pipe';
 import { ICourse } from '../../models/course';
 
@@ -24,7 +24,8 @@ class TestHostComponent {
     title: 'title value',
     creationDate: new Date(1992, 8, 12),
     durationMin: 20,
-    description: 'some desc'
+    description: 'some desc',
+    topRated: true
   };
 
   deletedCourse: ICourse;
@@ -44,7 +45,7 @@ describe('CourseListItemComponent', () => {
       declarations: [
         TestHostComponent,
         CourseListItemComponent,
-        MinPostfixPipe,
+        DurationPipe,
         TruncateTextPipe
       ]
     })
@@ -69,7 +70,7 @@ describe('CourseListItemComponent', () => {
 
       // assert
       expect(titleElem.nativeElement.innerText).toBe(component.stupidCourse.title);
-      expect(durationElem.nativeElement.innerText).toBe(`${component.stupidCourse.durationMin}min`);
+      expect(durationElem.nativeElement.innerText).toBe(`0h ${component.stupidCourse.durationMin}min`);
       expect(createdElem.nativeElement.innerText).toBe('12.09.1992');
       expect(descElem.nativeElement.innerText).toBe(component.stupidCourse.description);
     });

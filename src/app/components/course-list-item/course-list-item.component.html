@@ -1,9 +1,10 @@
-<div class="course">
+<div class="course" [class.top]="course.topRated">
   <div class="main">
     <div class="top">
       <h3 class="title">{{course.title}}</h3>
+      <i *ngIf="course.topRated" class="star"></i>
       <div class="right">
-        <span class="duration">{{course.durationMin | minPostfix}}</span>
+        <span class="duration">{{course.durationMin | duration}}</span>
         <span class="created">{{course.creationDate | date: 'dd.MM.yyyy'}}</span>
       </div>
     </div>
