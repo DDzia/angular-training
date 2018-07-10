@@ -1,4 +1,4 @@
-import { Directive, ElementRef, Renderer2, Input, OnInit } from '@angular/core';
+import { Directive, ElementRef, Renderer2, Input, OnInit, HostBinding } from '@angular/core';
 
 import { ICourse } from '../../models/course';
 
@@ -18,7 +18,7 @@ export class FreshCourseSelectionDirective implements OnInit {
   private static readonly twoWeeksAgo = new Date(
     FreshCourseSelectionDirective.now.getFullYear(),
     FreshCourseSelectionDirective.now.getMonth(),
-    FreshCourseSelectionDirective.now.getDate()
+    FreshCourseSelectionDirective.now.getDate() - 14
   );
 
 
@@ -30,7 +30,7 @@ export class FreshCourseSelectionDirective implements OnInit {
   }
 
   ngOnInit(): void {
-    if (this.course.creationDate > FreshCourseSelectionDirective.now &&
+    if (this.course.creationDate < FreshCourseSelectionDirective.now &&
          this.course.creationDate >= FreshCourseSelectionDirective.twoWeeksAgo) {
       this.renderer.setStyle(this.ref.nativeElement, 'border', `1px solid ${SelectionColor.fresh}`);
     } else if (this.course.creationDate > FreshCourseSelectionDirective.now) {

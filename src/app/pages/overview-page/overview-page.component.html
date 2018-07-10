@@ -30,7 +30,7 @@
 
 <ng-template #tpl let-item>
   <app-course-list-item
-    appFreshCourseSelection
+    [appFreshCourseSelection]="item"
     [course]="item"
     (delete)="onDeleteCourse($event)"
   ></app-course-list-item>
