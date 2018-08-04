@@ -1,0 +1,32 @@
+<app-page>
+
+  <div class="login-page">
+
+    <form #loginform="ngForm" (ngSubmit)="login()" class="login-form">
+      <table class="form-table">
+        <tbody>
+          <tr>
+            <td class="label">Login</td>
+            <td>
+                <input name="uName" [(ngModel)]="uName" type="text" required>
+            </td>
+          </tr>
+          <tr>
+            <td class="label">Passsword</td>
+            <td>
+                <input name="pwd" [(ngModel)]="pwd" type="password" required>
+            </td>
+          </tr>
+          <tr>
+              <td></td>
+              <td class="login-btn-cell">
+                <button [disabled]="!loginform.form.valid">Login</button>
+              </td>
+            </tr>
+        </tbody>
+      </table>
+    </form>
+
+  </div>
+
+</app-page>

@@ -1,12 +1,16 @@
 import { NgModule  } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
 import { DdVirtualizedModule } from 'dd-virtualized';
 
-import { ComponentsModule } from '../components/components.module';
+import { ServicesModule } from '../services';
+import { ComponentsModule } from '../components';
 
-import { OverviewPageComponent } from './overview-page/overview-page.component';
-import { SearchCourceFormComponent } from './overview-page/search-cource-form/search-cource-form.component';
+import { OverviewPageComponent, SearchCourceFormComponent } from './overview-page';
+import { LoginPageComponent } from './login-page';
+import { routes } from './routes';
+import { AuthGuard } from './auth.guard';
 
 
 @NgModule({
@@ -14,11 +18,17 @@ import { SearchCourceFormComponent } from './overview-page/search-cource-form/se
     CommonModule,
     FormsModule,
     ComponentsModule,
-    DdVirtualizedModule
+    ServicesModule.forRoot(),
+    DdVirtualizedModule,
+    RouterModule.forRoot(routes)
   ],
   declarations: [
     OverviewPageComponent,
-    SearchCourceFormComponent
+    SearchCourceFormComponent,
+    LoginPageComponent
+  ],
+  providers: [
+    AuthGuard
   ],
   exports: [OverviewPageComponent]
 })

@@ -1,0 +1,25 @@
+:host {
+  display: block;
+}
+
+.login-page {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  text-align: center;
+  .login-form {
+    display: inline-block;
+    margin-top: 30%;
+    .form-table {
+      .label {
+        font-weight: bold;
+        text-align: right;
+      }
+      .login-btn-cell {
+        text-align: left;
+      }
+    }
+  }
+}

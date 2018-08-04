@@ -1,12 +1,10 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-
 import { BrowserModule, By } from '@angular/platform-browser';
 import { Component } from '@angular/core';
 
 import { CourseListItemComponent } from './course-list-item.component';
-import { DurationPipe } from '../duration-pipe/duration.pipe';
-import { TruncateTextPipe } from '../truncate-text/truncate-text.pipe';
-import { ICourse } from '../../models/course';
+import { ICourse } from '../../models';
+import { DurationPipe, TruncateTextPipe } from '../../services';
 
 @Component({
   selector: 'app-test-host',

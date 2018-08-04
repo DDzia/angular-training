@@ -17,7 +17,7 @@ describe('DurationPipe', () => {
 
   it('DO not added postfix to not "NUMBER" type values', () => {
     // arrange
-    const valueUndefined = undefined;
+    const valueUndefined: undefined = undefined;
     const valueString = 'alex';
     const valueObject = {};
     const valueFunction = () => {};
