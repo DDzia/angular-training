@@ -4,7 +4,8 @@
     <h1 class="logo-title">Microsoft Virtual Academy</h1>
   </div>
   <div class="right">
-    <span>User Login</span>
-    <button class="logout-btn" (click)="logout()">Log Off</button>
+    <span *ngIf="authenticated && uName !== undefined">{{ uName }}</span>
+    <button *ngIf="authenticated" class="logout-btn" (click)="logout()">Log Off</button>
+    <a *ngIf="!authenticated && !isLoginPage" class="login-lnk" [routerLink]="loginUrl">Login</a>
   </div>
 </header>

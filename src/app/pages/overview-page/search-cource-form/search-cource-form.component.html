@@ -1,12 +1,11 @@
 <div class="search-course-form">
   <form (ngSubmit)="$event.preventDefault(); onSearch()">
     <input
+      #input
       type="search"
       class="search"
       name="search"
-      [(ngModel)]="searchSegment"
       placeholder="Name, segment or date"
     >
-    <button type="submit">Search</button>
   </form>
 </div>
