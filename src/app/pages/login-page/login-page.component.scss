@@ -10,8 +10,11 @@
   right: 0;
   text-align: center;
   .login-form {
+    position: relative;
     display: inline-block;
-    margin-top: 30%;
+    top: 40%;
+    left: 0%;
+    right: 0;
     .form-table {
       .label {
         font-weight: bold;
