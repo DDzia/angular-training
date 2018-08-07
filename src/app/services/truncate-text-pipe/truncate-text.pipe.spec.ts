@@ -6,9 +6,9 @@ describe('TruncateTextPipe', () => {
 
   it('dot not truncate not string-s', () => {
     // arrange
-    const valueUndefined = undefined;
+    const valueUndefined: undefined = undefined;
     const valueNumber = 1992;
-    const valueNull = null;
+    const valueNull: null = null;
     const valueObject = {};
     const valueFunction = () => {};
     const valueSymbol = Symbol('denis');

@@ -18,7 +18,7 @@ export class PageHeaderComponent implements OnInit {
     return this.authSrv.authenticated;
   }
 
-  private uName?: string;
+  uName?: string;
 
   constructor(private readonly authSrv: AuthService, private readonly router: Router) { }
 
