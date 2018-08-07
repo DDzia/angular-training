@@ -1,6 +1,12 @@
 $star-size: 20px;
 
+:host {
+  display: block;
+}
+
 .course {
+  width: 100%;
+  height: 100%;
   display: flex;
   flex-direction: row;
   background-color: #f7f7f7;
@@ -58,7 +64,9 @@ $star-size: 20px;
     display: flex;
     flex-direction: column;
 
-    &>button+button {
+    &>button+button,
+    &>button+.btn,
+    &>.btn+button {
       margin-top: 10px;
     }
   }

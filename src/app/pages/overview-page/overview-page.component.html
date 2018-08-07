@@ -7,17 +7,16 @@
       <button>Add course</button>
     </div>
 
-    <div class="courses-list">
-      <div class="list">
-        <dd-virtualized-list
-          *ngIf="dataAvailable$ | async"
-          [items]="viewItems$ | async | orderBy: 'creationDate'"
-          [template]="tpl"
-          [itemHeight]="130">
-        </dd-virtualized-list>
+    <div class="courses-data">
         <h2 class="no-data" *ngIf="!(dataAvailable$ | async)">
           {{ "Do data. Feel free to add new course" | uppercase }}
         </h2>
+      <div class="list">
+        <app-course-list-item *ngFor="let item of viewItems$ | async | orderBy: 'creationDate'"
+          [appFreshCourseSelection]="item"
+          [course]="item"
+          (delete)="onDeleteCourse($event)"
+        ></app-course-list-item>
       </div>
       <div class="more-btn-layout">
         <button (click)="onLoadMore()">load more</button>
@@ -26,12 +25,3 @@
   </div>
 
 </app-page>
-
-
-<ng-template #tpl let-item>
-  <app-course-list-item
-    [appFreshCourseSelection]="item"
-    [course]="item"
-    (delete)="onDeleteCourse($event)"
-  ></app-course-list-item>
-</ng-template>

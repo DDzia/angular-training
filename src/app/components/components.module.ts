@@ -12,6 +12,7 @@ import { CourseListItemComponent } from './course-list-item';
 import { FreshCourseSelectionDirective } from './fresh-course-selection-directive';
 import { NoDataForEmptyDirective } from './no-data-for-empty-directive';
 import { ServicesModule } from '../services';
+import { SpinnerComponent } from './spinner';
 
 
 
@@ -32,11 +33,13 @@ import { ServicesModule } from '../services';
     FreshCourseSelectionDirective,
     NoDataForEmptyDirective,
     NoDataForEmptyDirective,
+    SpinnerComponent,
   ],
   providers: [
     DatePipe
   ],
   exports: [
+    SpinnerComponent,
     PageComponent,
     PageBreadcrumbComponent,
     CourseListItemComponent,

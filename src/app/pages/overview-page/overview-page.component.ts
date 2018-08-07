@@ -37,7 +37,7 @@ export class OverviewPageComponent implements OnInit, OnDestroy {
     this.searchToVdSubscription = this.searchSegment$
     .pipe(
       debounceTime(100),
-      switchMap((x) => from(this.courserSrv.filter(x)))
+      switchMap((x) => from( x !== '' ? this.courserSrv.filter(x) : this.courserSrv.get()))
     )
     .subscribe(this.viewItems$);
   }
@@ -78,6 +78,11 @@ export class OverviewPageComponent implements OnInit, OnDestroy {
   }
 
   onSearch(segment: string) {
+    // skip form raised event
+    if (typeof segment !== 'string') {
+      return;
+    }
+
     this.searchSegment$.next(segment);
   }
 }

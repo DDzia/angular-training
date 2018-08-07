@@ -12,7 +12,7 @@
   </div>
 
   <div class="buttons">
-    <button (click)="onEditCourse()">Edit</button>
+    <a [routerLink]="course.id" class="btn">Edit</a>
     <button (click)="onDeleteBtnClick()">Delete</button>
   </div>
 </div>

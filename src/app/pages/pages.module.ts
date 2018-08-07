@@ -2,7 +2,6 @@ import { NgModule  } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
-import { DdVirtualizedModule } from 'dd-virtualized';
 
 import { ServicesModule } from '../services';
 import { ComponentsModule } from '../components';
@@ -11,6 +10,7 @@ import { OverviewPageComponent, SearchCourceFormComponent } from './overview-pag
 import { LoginPageComponent } from './login-page';
 import { routes } from './routes';
 import { AuthGuard } from './auth.guard';
+import { CoursePageComponent } from './course-page';
 
 
 @NgModule({
@@ -19,17 +19,20 @@ import { AuthGuard } from './auth.guard';
     FormsModule,
     ComponentsModule,
     ServicesModule.forRoot(),
-    DdVirtualizedModule,
     RouterModule.forRoot(routes)
   ],
   declarations: [
     OverviewPageComponent,
     SearchCourceFormComponent,
-    LoginPageComponent
+    LoginPageComponent,
+    CoursePageComponent
   ],
   providers: [
     AuthGuard
   ],
-  exports: [OverviewPageComponent]
+  exports: [
+    OverviewPageComponent,
+    RouterModule
+  ]
 })
 export class PagesModule { }
