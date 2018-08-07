@@ -1,10 +1,14 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { BrowserModule, By } from '@angular/platform-browser';
+import { RouterModule } from '@angular/router';
 import { Component } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { APP_BASE_HREF } from '@angular/common';
 
 import { CourseListItemComponent } from './course-list-item.component';
 import { ICourse } from '../../models';
 import { DurationPipe, TruncateTextPipe } from '../../services';
+
 
 @Component({
   selector: 'app-test-host',
@@ -39,7 +43,20 @@ describe('CourseListItemComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [BrowserModule],
+      imports: [
+        BrowserModule,
+        RouterModule.forRoot([
+          {
+            path: '',
+            redirectTo: '',
+            pathMatch: 'full'
+          }
+        ]),
+        FormsModule
+      ],
+      providers: [
+        {provide: APP_BASE_HREF, useValue : '/' }
+      ],
       declarations: [
         TestHostComponent,
         CourseListItemComponent,
@@ -73,18 +90,5 @@ describe('CourseListItemComponent', () => {
       expect(descElem.nativeElement.innerText).toBe(component.stupidCourse.description);
     });
 
-  });
-
-  describe('event tests', () => {
-    it('delete event works', () => {
-      // arrange
-      const deleteButton = fixture.debugElement.queryAll(By.css('.buttons button'))[1];
-
-      // act
-      deleteButton.triggerEventHandler('click', null);
-
-      // assert
-      expect(component.deletedCourse).toBe(component.stupidCourse);
-    });
   });
 });

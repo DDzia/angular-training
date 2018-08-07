@@ -1,6 +1,4 @@
-import { Component, EventEmitter, Output, ViewChild, ElementRef, AfterViewInit, OnDestroy } from '@angular/core';
-import { Subscription, fromEvent } from 'rxjs';
-import { pluck, tap } from 'rxjs/operators';
+import { Component, EventEmitter, Output } from '@angular/core';
 
 
 @Component({
@@ -8,26 +6,19 @@ import { pluck, tap } from 'rxjs/operators';
   templateUrl: './search-cource-form.component.html',
   styleUrls: ['./search-cource-form.component.scss']
 })
-export class SearchCourceFormComponent implements AfterViewInit, OnDestroy {
-  @ViewChild('input')
-  readonly input: ElementRef<HTMLInputElement>;
-
+export class SearchCourceFormComponent {
   @Output() readonly search = new EventEmitter<string>();
 
-  private inputSubscribtion?: Subscription;
-
-  ngAfterViewInit(): void {
-    this.inputSubscribtion = fromEvent(this.input.nativeElement, 'input')
-    .pipe(
-      pluck('target', 'value'),
-      tap((x) => console.log(`on search: '${x}'`))
-    )
-    .subscribe(this.search);
+  private segmentInternal = '';
+  set segment(value: string) {
+    this.segmentInternal = value == null ? '' : value;
+    this.onSearch();
+  }
+  get segment() {
+    return this.segmentInternal;
   }
 
-  ngOnDestroy(): void {
-    if (this.inputSubscribtion) {
-      this.inputSubscribtion.unsubscribe();
-    }
+  onSearch() {
+    this.search.emit(this.segmentInternal);
   }
 }

@@ -1,0 +1,43 @@
+.spinners {
+  text-align: center;
+}
+
+.form {
+  .control-group {
+    margin-bottom: 20px;
+
+    label {
+      font-weight: bold;
+    }
+
+    .control {
+      [name="title"],
+      [name="description"] {
+        min-width: 100%;
+        max-width: 100%;
+        display: block;
+      }
+
+      [name="description"] {
+        resize: none;
+        min-height: 100px;
+        max-height: 100px;
+      }
+
+      [name="creationDate"],
+      [name="durationMin"] {
+        width: 200px;
+      }
+
+      [name="durationMin"] + .duration-formatteable {
+        margin-left: 10px;
+      }
+    }
+  }
+
+  .buttons-group {
+    button + button {
+      margin-left: 10px;
+    }
+  }
+}
