@@ -1,57 +1,92 @@
-import { Component, OnInit, NgZone } from '@angular/core';
+import { BehaviorSubject, from, Subscription } from 'rxjs';
+import { tap, switchMap } from 'rxjs/operators';
+
+import { Component, OnInit, NgZone, OnDestroy } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 
 import { ICourse } from '../../models';
 import { CoursesService } from '../../contracts';
-import { ActivatedRoute } from '@angular/router';
+import { IBreadcrumb } from '../../components';
+
 
 @Component({
   selector: 'app-course-page',
   templateUrl: './course-page.component.html',
   styleUrls: ['./course-page.component.scss']
 })
-export class CoursePageComponent implements OnInit {
-  private readonly courseId: number;
-
+export class CoursePageComponent implements OnInit, OnDestroy {
+  breadcrumbs?: IBreadcrumb[] = [];
   process = false;
+  course?: ICourse;
 
-  course: ICourse;
-  private origin: ICourse;
+  private readonly courseId = new BehaviorSubject<number>(0);
+  private origin = new BehaviorSubject<ICourse | undefined>(undefined);
+
+  private routeParamsSubscription: Subscription;
+  private courseIdSubscription: Subscription;
+  private originSubscription: Subscription;
 
   constructor(private readonly courseSrv: CoursesService,
-              route: ActivatedRoute,
-              private zone: NgZone) {
-    this.courseId = Number(route.snapshot.paramMap.get('id'));
+              private readonly route: ActivatedRoute,
+              private readonly zone: NgZone,
+              private readonly router: Router) {
   }
 
   ngOnInit() {
-    this.courseSrv.getById(this.courseId)
-      .then((x) => this.zone.runOutsideAngular(() => this.origin = x))
-      .then(() => this.resetToDefault());
-  }
+    this.routeParamsSubscription = this.route.paramMap
+    .subscribe(p => this.courseId.next(Number(p.get('id'))));
 
-  async saveChanges() {
-    this.process = true;
+    this.courseIdSubscription = this.courseId
+    .pipe(
+      tap(() => this.origin.next(undefined)),
+      switchMap((id) => from(this.courseSrv.getById(id))),
+    )
+    .subscribe(this.origin);
 
-    this.zone.runOutsideAngular(async () => {
-      await this.courseSrv.update(this.course);
-      this.origin = this.course;
-    })
-    .then(() => {
-      this.resetToDefault();
-      this.process = false;
+    this.originSubscription = this.origin
+    .subscribe((x) => {
+      if (x) {
+        this.cloneOrigin(x);
+        this.breadcrumbs = [
+          {
+            title: 'Home',
+            url: ''
+          },
+          {
+            title: x.title
+          }
+        ];
+      } else {
+        this.process = false;
+        this.breadcrumbs = undefined;
+        this.course = undefined;
+      }
     });
   }
 
-  resetToDefault() {
-    this.course = this.copyCourse(this.origin);
+  ngOnDestroy(): void {
+    this.routeParamsSubscription.unsubscribe();
+    this.courseIdSubscription.unsubscribe();
+    this.originSubscription.unsubscribe();
+
+    this.courseId.unsubscribe();
+    this.origin.unsubscribe();
   }
 
-  private copyCourse(x: ICourse) {
-    const copy: any = {};
-    Object.keys(x).forEach((key) => copy[key] = (x as any)[key]);
+  saveChanges() {
+    this.process = true;
 
-    (copy as ICourse).creationDate = new Date();
+    this.zone.runOutsideAngular(async () => await this.courseSrv.update(this.course))
+      .then(() => this.goToList());
+  }
 
-    return copy;
+  goToList() {
+    this.router.navigate(['courses']);
+  }
+
+  private cloneOrigin(o: ICourse) {
+    const clone: any = {...o};
+    (clone as ICourse).creationDate = new Date();
+    this.course = clone;
   }
 }

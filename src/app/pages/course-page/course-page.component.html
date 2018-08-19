@@ -1,4 +1,5 @@
 <app-page>
+  <app-page-breadcrumb *ngFor="let b of (breadcrumbs ? breadcrumbs : [])" [item]="b"></app-page-breadcrumb>
   <div class="course-page">
     <div class="spinners" *ngIf="!course || process">
       <app-spinner *ngIf="!course" [subtext]="'Loading course...'"></app-spinner>
@@ -33,7 +34,7 @@
       </div>
       <div class="buttons-group">
         <button type="submit" [disabled]="!form.form.valid">Save</button>
-        <button type="button" (click)="resetToDefault()">Cancel</button>
+        <button type="button" (click)="goToList()">Cancel</button>
       </div>
     </form>
   </div>

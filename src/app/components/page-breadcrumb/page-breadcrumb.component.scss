@@ -3,7 +3,8 @@
 .breadcrumb {
   display: inline-block;
   color: $primary-color;
-  &>a {
+  &>a
+   {
     color: $primary-color;
     text-decoration: none;
     &:active,
@@ -13,5 +14,10 @@
     &:hover {
       text-decoration: underline;
     }
+  }
+
+  &>span {
+    cursor: not-allowed;
+    color: $disabled-color;
   }
 }
