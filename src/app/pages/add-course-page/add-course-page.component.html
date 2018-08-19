@@ -1,0 +1,40 @@
+<app-page>
+    <app-page-breadcrumb *ngFor="let b of (breadcrumbs ? breadcrumbs : [])" [item]="b"></app-page-breadcrumb>
+    <div class="add-course-page">
+      <div class="spinners">
+        <app-spinner *ngIf="process" [subtext]="'Saving...'"></app-spinner>
+      </div>
+
+      <form class="form" #form="ngForm" *ngIf="course" (ngSubmit)="saveChanges()">
+        <div class="control-group">
+          <label>Title</label>
+          <div class="control">
+            <input type="text" name="title" [(ngModel)]="course.title" required>
+          </div>
+        </div>
+        <div class="control-group">
+          <label>Description</label>
+          <div class="control">
+            <textarea name="description" [(ngModel)]="course.description" required></textarea>
+          </div>
+        </div>
+        <div class="control-group">
+          <label>Date</label>
+          <div class="control">
+            <input type="date" name="creationDate" [value]="course.creationDate | date:'yyyy-MM-dd'" readonly>
+          </div>
+        </div>
+        <div class="control-group">
+          <label>Duration</label>
+          <div class="control">
+            <input type="number" name="durationMin" [(ngModel)]="course.durationMin" pattern="[^\D0]+" required>
+            <span class="duration-formatteable">{{course.durationMin | duration}}</span>
+          </div>
+        </div>
+        <div class="buttons-group">
+          <button type="submit" [disabled]="!form.form.valid">Save</button>
+          <button type="button" (click)="goToList()">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </app-page>

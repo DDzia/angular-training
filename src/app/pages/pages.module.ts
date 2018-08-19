@@ -11,6 +11,8 @@ import { LoginPageComponent } from './login-page';
 import { routes } from './routes';
 import { AuthGuard } from './auth.guard';
 import { CoursePageComponent } from './course-page';
+import { AddCoursePageComponent } from './add-course-page';
+import { NotFoundPageComponent } from './not-found-page';
 
 
 @NgModule({
@@ -25,7 +27,9 @@ import { CoursePageComponent } from './course-page';
     OverviewPageComponent,
     SearchCourceFormComponent,
     LoginPageComponent,
-    CoursePageComponent
+    CoursePageComponent,
+    AddCoursePageComponent,
+    NotFoundPageComponent
   ],
   providers: [
     AuthGuard

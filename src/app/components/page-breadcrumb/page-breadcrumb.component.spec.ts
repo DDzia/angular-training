@@ -1,4 +1,6 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { RouterModule } from '@angular/router';
+import { APP_BASE_HREF } from '@angular/common';
 
 import { PageBreadcrumbComponent } from './page-breadcrumb.component';
 import { BrowserModule, By } from '@angular/platform-browser';
@@ -14,7 +16,7 @@ import { IBreadcrumb } from './ibreadcrumb';
 class TestHostComponent {
   stupidBreadcrumb: IBreadcrumb = {
     title: 'some title',
-    url: 'http://github.com/'
+    url: '/repository'
   };
 }
 
@@ -25,12 +27,16 @@ describe('PageBreadcrumbComponent', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       imports: [
-        BrowserModule
+        BrowserModule,
+        RouterModule.forRoot([])
       ],
       declarations: [
         TestHostComponent,
         PageBreadcrumbComponent
-      ]
+      ],
+      providers: [
+        {provide: APP_BASE_HREF, useValue : '/' }
+      ],
     })
     .compileComponents();
   }));
@@ -47,6 +53,6 @@ describe('PageBreadcrumbComponent', () => {
 
     // assert
     expect(linkNode.innerText).toBe(component.stupidBreadcrumb.title);
-    expect(linkNode.href).toBe(component.stupidBreadcrumb.url);
+    expect(linkNode.href).toBe(`${location.origin}${component.stupidBreadcrumb.url}`);
   });
 });

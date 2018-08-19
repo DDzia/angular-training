@@ -4,7 +4,7 @@
   <div class="page-content">
     <div class="search-and-add-btn">
       <app-search-cource-form (search)="onSearch($event)"></app-search-cource-form>
-      <button>Add course</button>
+      <a [routerLink]="'./new'" class="btn">Add course</a>
     </div>
 
     <div class="courses-data">

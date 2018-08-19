@@ -20,8 +20,8 @@ export class OverviewPageComponent implements OnInit, OnDestroy {
       url: ''
     },
     {
-      title: 'Overview',
-      url: ''
+      title: 'Courses',
+      url: '/courses'
     }
   ];
 
