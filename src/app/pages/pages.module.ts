@@ -21,7 +21,7 @@ import { NotFoundPageComponent } from './not-found-page';
     FormsModule,
     ComponentsModule,
     ServicesModule.forRoot(),
-    RouterModule.forRoot(routes)
+    routes
   ],
   declarations: [
     OverviewPageComponent,
