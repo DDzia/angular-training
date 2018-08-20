@@ -31,7 +31,12 @@ const routes: Route[] = [
         // 'courses/<courseId>'
         matcher: (segments) =>
           segments.length === 1 && /^\d+$/.test(segments[0].path) ?
-            { consumed: segments } :
+            {
+              consumed: segments,
+              posParams: {
+                id: segments[0]
+              }
+            } :
             null
       }
     ]
