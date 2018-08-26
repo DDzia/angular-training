@@ -44,7 +44,7 @@ import { SpinnerComponent } from './spinner';
     PageBreadcrumbComponent,
     CourseListItemComponent,
     FreshCourseSelectionDirective,
-    NoDataForEmptyDirective,
+    NoDataForEmptyDirective
   ]
 })
 export class ComponentsModule { }

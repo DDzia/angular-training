@@ -1,6 +1,6 @@
 import { Component, ViewEncapsulation, OnDestroy, OnInit } from '@angular/core';
-import { BehaviorSubject, Observable, of, from, Subscription } from 'rxjs';
-import { map, debounceTime, switchMap, filter } from 'rxjs/operators';
+import { BehaviorSubject, Observable, of, from, Subscription, combineLatest } from 'rxjs';
+import { map, debounceTime, switchMap, filter, tap, withLatestFrom, distinctUntilChanged } from 'rxjs/operators';
 
 
 import { IBreadcrumb } from '../../components';
@@ -14,6 +14,8 @@ import { CoursesService } from '../../contracts';
   encapsulation: ViewEncapsulation.None
 })
 export class OverviewPageComponent implements OnInit, OnDestroy {
+  private static readonly BatchSize = 10;
+
   readonly breadcrumbs: IBreadcrumb[] = [
     {
       title: 'Home',
@@ -26,26 +28,72 @@ export class OverviewPageComponent implements OnInit, OnDestroy {
   ];
 
   readonly searchSegment$ = new BehaviorSubject('');
-  readonly viewItems$ = new BehaviorSubject<ICourse[]>([]);
+
+  readonly items$ = new BehaviorSubject<ICourse[]>([]);
+  readonly dataAvailable$ = this.items$.pipe(map((x) => !!x.length));
+
+  readonly requestNow$ = new BehaviorSubject(true);
+  readonly moreAvailable$ = new BehaviorSubject(true);
+
+  private readonly batchesLoaded$ = new BehaviorSubject(0);
+
+  private currentRequestId = 0;
+
   private searchToVdSubscription: Subscription;
-  readonly dataAvailable$ = this.viewItems$.pipe(map((x) => !!x.length));
+  private searchToBatchNumberSubscription: Subscription;
 
   constructor(private readonly courserSrv: CoursesService) {
   }
 
   ngOnInit(): void {
-    this.searchToVdSubscription = this.searchSegment$
-    .pipe(
-      debounceTime(100),
-      switchMap((x) => from( x !== '' ? this.courserSrv.filter(x) : this.courserSrv.get()))
+    this.searchToBatchNumberSubscription = this.searchSegment$
+    .pipe(distinctUntilChanged())
+    .subscribe(() => {
+      this.items$.next([]);
+      this.batchesLoaded$.next(0);
+    });
+
+    this.searchToVdSubscription = combineLatest(
+      this.searchSegment$,
+      this.batchesLoaded$
     )
-    .subscribe(this.viewItems$);
+    .pipe(
+      tap(([textSegment, currentBatch]) => {
+        if (currentBatch === 0) {
+          this.moreAvailable$.next(true);
+        }
+      }),
+      map(([textSegment, currentBatch]) => ([textSegment, currentBatch, ++this.currentRequestId] as [string, number, number])),
+      debounceTime(100),
+      tap(() => this.requestNow$.next(true)),
+      switchMap(([textSegment, currentBatch, requestId]) => {
+        const start = currentBatch * OverviewPageComponent.BatchSize;
+        const end = start + OverviewPageComponent.BatchSize;
+        return from(this.courserSrv.get(start, end, textSegment))
+        .pipe(
+          withLatestFrom(of(requestId))
+        );
+      }),
+      filter(([batch, requestId]) => requestId === this.currentRequestId)
+    )
+    .subscribe(([batch]) => {
+      const newItems = this.items$.getValue().slice();
+      newItems.push(...batch);
+      this.items$.next(newItems);
+      this.requestNow$.next(false);
+      // full batch received
+      this.moreAvailable$.next(batch.length === OverviewPageComponent.BatchSize);
+    });
   }
 
   ngOnDestroy(): void {
     this.searchSegment$.unsubscribe();
-    this.viewItems$.unsubscribe();
+    this.items$.unsubscribe();
     this.searchToVdSubscription.unsubscribe();
+    this.searchToBatchNumberSubscription.unsubscribe();
+    this.requestNow$.unsubscribe();
+    this.moreAvailable$.unsubscribe();
+    this.batchesLoaded$.unsubscribe();
   }
 
   onDeleteCourse(courceToDelete: ICourse) {
@@ -59,12 +107,12 @@ export class OverviewPageComponent implements OnInit, OnDestroy {
     )
     .subscribe({
       next: (x) => {
-        const indexRemove = this.viewItems$.getValue().findIndex((z) => z.id === x.id);
+        const indexRemove = this.items$.getValue().findIndex((z) => z.id === x.id);
         const itemVisible = indexRemove !== -1;
         if (itemVisible) {
-          const itemsView = this.viewItems$.getValue().slice();
+          const itemsView = this.items$.getValue().slice();
           itemsView.splice(indexRemove, 1);
-          this.viewItems$.next(itemsView);
+          this.items$.next(itemsView);
         }
       },
       error: (err) => {
@@ -74,7 +122,9 @@ export class OverviewPageComponent implements OnInit, OnDestroy {
   }
 
   onLoadMore() {
-    console.log('load more click');
+    this.batchesLoaded$.next(
+      this.batchesLoaded$.getValue() + 1
+    );
   }
 
   onSearch(segment: string) {

@@ -8,17 +8,20 @@
     </div>
 
     <div class="courses-data">
-        <h2 class="no-data" *ngIf="!(dataAvailable$ | async)">
+        <h2 class="no-data" *ngIf="!(dataAvailable$ | async) && !(requestNow$ | async)">
           {{ "Do data. Feel free to add new course" | uppercase }}
         </h2>
+        <div *ngIf="requestNow$ | async" class="spinners">
+          <app-spinner subtext="Loading data..."></app-spinner>
+        </div>
       <div class="list">
-        <app-course-list-item *ngFor="let item of viewItems$ | async | orderBy: 'creationDate'"
+        <app-course-list-item *ngFor="let item of items$ | async | orderBy: 'creationDate'"
           [appFreshCourseSelection]="item"
           [course]="item"
           (delete)="onDeleteCourse($event)"
         ></app-course-list-item>
       </div>
-      <div class="more-btn-layout">
+      <div *ngIf="!(requestNow$ | async) && (moreAvailable$ | async)" class="more-btn-layout">
         <button (click)="onLoadMore()">load more</button>
       </div>
     </div>
