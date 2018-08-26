@@ -1,1 +1,1 @@
-export * from './localAuth.service';
+export * from './remote-auth.service';
