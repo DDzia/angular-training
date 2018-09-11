@@ -47,7 +47,10 @@ export class OverviewPageComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.searchToBatchNumberSubscription = this.searchSegment$
-    .pipe(distinctUntilChanged())
+    .pipe(
+      filter((x) => !!(x.length === 0 || x.length >= 3)),
+      distinctUntilChanged()
+    )
     .subscribe(() => {
       this.items$.next([]);
       this.batchesLoaded$.next(0);
@@ -58,6 +61,9 @@ export class OverviewPageComponent implements OnInit, OnDestroy {
       this.batchesLoaded$
     )
     .pipe(
+      filter(([textSegment]) => {
+        return !!(textSegment.length === 0 || textSegment.length >= 3);
+      }),
       tap(([textSegment, currentBatch]) => {
         if (currentBatch === 0) {
           this.moreAvailable$.next(true);

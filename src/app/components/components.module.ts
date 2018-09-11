@@ -13,6 +13,7 @@ import { FreshCourseSelectionDirective } from './fresh-course-selection-directiv
 import { NoDataForEmptyDirective } from './no-data-for-empty-directive';
 import { ServicesModule } from '../services';
 import { SpinnerComponent } from './spinner';
+import { OverlayLayoutComponent } from './overlay-layout';
 
 
 
@@ -34,6 +35,7 @@ import { SpinnerComponent } from './spinner';
     NoDataForEmptyDirective,
     NoDataForEmptyDirective,
     SpinnerComponent,
+    OverlayLayoutComponent,
   ],
   providers: [
     DatePipe
@@ -44,7 +46,8 @@ import { SpinnerComponent } from './spinner';
     PageBreadcrumbComponent,
     CourseListItemComponent,
     FreshCourseSelectionDirective,
-    NoDataForEmptyDirective
+    NoDataForEmptyDirective,
+    OverlayLayoutComponent
   ]
 })
 export class ComponentsModule { }

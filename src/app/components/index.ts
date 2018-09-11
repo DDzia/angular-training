@@ -5,3 +5,4 @@ export * from './page-footer';
 export * from './page-header';
 export * from './page';
 export * from './page-breadcrumb';
+export * from './overlay-layout';

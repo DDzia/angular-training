@@ -11,6 +11,7 @@ import { RemoteAuthService } from './auth-service';
 import { RemoteCoursesService } from './remote-courses-service';
 import { AuthStorageService } from './auth-storage';
 import { TokenInterceptor } from './token-interceptor';
+import { OverlayService } from './overlay';
 
 
 @NgModule({
@@ -39,7 +40,8 @@ import { TokenInterceptor } from './token-interceptor';
       provide: HTTP_INTERCEPTORS,
       useClass: TokenInterceptor,
       multi: true
-    }
+    },
+    { provide: OverlayService, useFactory: () => OverlayService.instance }
   ],
   exports: [
     DurationPipe,

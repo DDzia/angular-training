@@ -19,7 +19,6 @@ export class LoginPageComponent {
       this.uName,
       this.pwd
     )
-    .then(() => this.authSrv.login(this.uName, this.pwd))
     .then(() => this.router.navigateByUrl(''));
   }
 }
