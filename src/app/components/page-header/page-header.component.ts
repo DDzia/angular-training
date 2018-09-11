@@ -8,26 +8,13 @@ import { AuthService } from '../../contracts';
   templateUrl: './page-header.component.html',
   styleUrls: ['./page-header.component.scss']
 })
-export class PageHeaderComponent implements OnInit {
+export class PageHeaderComponent {
   readonly loginUrl = '/login';
   get isLoginPage() {
     return this.router.url === this.loginUrl;
   }
 
-  get authenticated() {
-    return this.authSrv.authenticated;
-  }
-
-  uName?: string;
-
-  constructor(private readonly authSrv: AuthService, private readonly router: Router) { }
-
-  ngOnInit() {
-    if (this.authenticated) {
-      this.authSrv.getUserInfo()
-        .then((x) => this.uName = x);
-    }
-  }
+  constructor(readonly authSrv: AuthService, private readonly router: Router) { }
 
   logout() {
     this.authSrv.logout();

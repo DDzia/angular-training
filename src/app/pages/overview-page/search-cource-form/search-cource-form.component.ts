@@ -12,7 +12,6 @@ export class SearchCourceFormComponent {
   private segmentInternal = '';
   set segment(value: string) {
     this.segmentInternal = value == null ? '' : value;
-    this.onSearch();
   }
   get segment() {
     return this.segmentInternal;

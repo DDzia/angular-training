@@ -18,6 +18,10 @@
   }
 
   &>.right {
+    .user {
+      margin-right: 1rem;
+    }
+
     .logout-btn {
       margin-left: 10px;
     }
