@@ -3,7 +3,7 @@
 
   <div class="page-content">
     <div class="search-and-add-btn">
-      <app-search-cource-form (search)="onSearch($event)"></app-search-cource-form>
+      <app-search-cource-form></app-search-cource-form>
       <a [routerLink]="'./new'" class="btn">Add course</a>
     </div>
 
@@ -15,7 +15,7 @@
           <app-spinner subtext="Loading data..."></app-spinner>
         </div>
       <div class="list">
-        <app-course-list-item *ngFor="let item of items$ | async | orderBy: 'creationDate'"
+        <app-course-list-item *ngFor="let item of itemsArray | orderBy: 'creationDate'"
           [appFreshCourseSelection]="item"
           [course]="item"
           (delete)="onDeleteCourse($event)"

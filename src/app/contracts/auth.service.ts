@@ -5,11 +5,6 @@ interface ColdObservable<T = any> extends Observable<T> {
 }
 
 export abstract class AuthService {
-  get authenticated() {
-    return this.authenticated$.getValue();
-  }
-  abstract authenticated$: ColdObservable<boolean>;
-
   userInfo$: ColdObservable<string | undefined>;
   abstract getUserInfo(): Promise<string>;
 

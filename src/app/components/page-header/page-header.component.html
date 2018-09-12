@@ -4,8 +4,8 @@
     <h1 class="logo-title">Microsoft Virtual Academy</h1>
   </div>
   <div class="right">
-    <span class="user" *ngIf="authSrv.authenticated$ | async">{{ authSrv.userInfo$ | async }}</span>
-    <button *ngIf="authSrv.authenticated$ | async" class="logout-btn" (click)="logout()">Log Off</button>
-    <a *ngIf="!(authSrv.authenticated$ | async) && !isLoginPage" class="login-lnk" [routerLink]="loginUrl">Login</a>
+    <span class="user" *ngIf="authSrv.userInfo$ | async">{{ authSrv.userInfo$ | async }}</span>
+    <button *ngIf="authSrv.userInfo$ | async" class="logout-btn" (click)="logout()">Log Off</button>
+    <a *ngIf="!(authSrv.userInfo$ | async) && !isLoginPage" class="login-lnk" [routerLink]="loginUrl">Login</a>
   </div>
 </header>

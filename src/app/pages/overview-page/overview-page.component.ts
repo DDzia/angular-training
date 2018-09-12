@@ -1,11 +1,15 @@
 import { Component, ViewEncapsulation, OnDestroy, OnInit } from '@angular/core';
 import { BehaviorSubject, Observable, of, from, Subscription, combineLatest } from 'rxjs';
 import { map, debounceTime, switchMap, filter, tap, withLatestFrom, distinctUntilChanged } from 'rxjs/operators';
+import { Store } from '@ngrx/store';
 
 
 import { IBreadcrumb } from '../../components';
 import { ICourse } from '../../models';
 import { CoursesService } from '../../contracts';
+import { AppState } from '../../reducers';
+import { CoursesListAction } from '../../actions';
+
 
 @Component({
   selector: 'app-overview-page',
@@ -27,10 +31,8 @@ export class OverviewPageComponent implements OnInit, OnDestroy {
     }
   ];
 
-  readonly searchSegment$ = new BehaviorSubject('');
-
-  readonly items$ = new BehaviorSubject<ICourse[]>([]);
-  readonly dataAvailable$ = this.items$.pipe(map((x) => !!x.length));
+  readonly items$: Observable<ICourse[] | undefined>;
+  readonly dataAvailable$: Observable<boolean>;
 
   readonly requestNow$ = new BehaviorSubject(true);
   readonly moreAvailable$ = new BehaviorSubject(true);
@@ -42,28 +44,34 @@ export class OverviewPageComponent implements OnInit, OnDestroy {
   private searchToVdSubscription: Subscription;
   private searchToBatchNumberSubscription: Subscription;
 
-  constructor(private readonly courserSrv: CoursesService) {
+  private itemsArray?: ICourse[];
+
+  constructor(private readonly courserSrv: CoursesService, private readonly store: Store<AppState>) {
+    this.items$ = this.store.select((x) => x.courses)
+    .pipe(
+      map((x) => this.itemsArray = x)
+    );
+
+    this.dataAvailable$ = this.items$.pipe(map((x) => !!x.length));
   }
 
   ngOnInit(): void {
-    this.searchToBatchNumberSubscription = this.searchSegment$
+    this.searchToBatchNumberSubscription = this.store.select((x) => x.searchLine)
     .pipe(
       filter((x) => !!(x.length === 0 || x.length >= 3)),
       distinctUntilChanged()
     )
     .subscribe(() => {
-      this.items$.next([]);
+      this.store.dispatch({ type: CoursesListAction.updateList, payload: [] });
       this.batchesLoaded$.next(0);
     });
 
     this.searchToVdSubscription = combineLatest(
-      this.searchSegment$,
-      this.batchesLoaded$
+      this.store.select((x) => x.searchLine),
+      this.batchesLoaded$,
     )
     .pipe(
-      filter(([textSegment]) => {
-        return !!(textSegment.length === 0 || textSegment.length >= 3);
-      }),
+      filter(([textSegment, loadedBatches]) => !!(textSegment.length === 0 || textSegment.length >= 3 )),
       tap(([textSegment, currentBatch]) => {
         if (currentBatch === 0) {
           this.moreAvailable$.next(true);
@@ -83,9 +91,11 @@ export class OverviewPageComponent implements OnInit, OnDestroy {
       filter(([batch, requestId]) => requestId === this.currentRequestId)
     )
     .subscribe(([batch]) => {
-      const newItems = this.items$.getValue().slice();
-      newItems.push(...batch);
-      this.items$.next(newItems);
+      const newList = this.itemsArray.slice();
+      newList.push(...batch);
+
+      this.store.dispatch({ type: CoursesListAction.updateList, payload: newList });
+
       this.requestNow$.next(false);
       // full batch received
       this.moreAvailable$.next(batch.length === OverviewPageComponent.BatchSize);
@@ -93,8 +103,6 @@ export class OverviewPageComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.searchSegment$.unsubscribe();
-    this.items$.unsubscribe();
     this.searchToVdSubscription.unsubscribe();
     this.searchToBatchNumberSubscription.unsubscribe();
     this.requestNow$.unsubscribe();
@@ -113,12 +121,13 @@ export class OverviewPageComponent implements OnInit, OnDestroy {
     )
     .subscribe({
       next: (x) => {
-        const indexRemove = this.items$.getValue().findIndex((z) => z.id === x.id);
+        const indexRemove = this.itemsArray.findIndex((z) => z.id === x.id);
         const itemVisible = indexRemove !== -1;
         if (itemVisible) {
-          const itemsView = this.items$.getValue().slice();
+          const itemsView = this.itemsArray.slice();
           itemsView.splice(indexRemove, 1);
-          this.items$.next(itemsView);
+
+          this.store.dispatch({ type: CoursesListAction.updateList, payload: itemsView });
         }
       },
       error: (err) => {
@@ -131,14 +140,5 @@ export class OverviewPageComponent implements OnInit, OnDestroy {
     this.batchesLoaded$.next(
       this.batchesLoaded$.getValue() + 1
     );
-  }
-
-  onSearch(segment: string) {
-    // skip form raised event
-    if (typeof segment !== 'string') {
-      return;
-    }
-
-    this.searchSegment$.next(segment);
   }
 }

@@ -1,6 +1,3 @@
-import { Injectable } from '@angular/core';
-
-@Injectable()
 export class AuthStorageService {
   private static readonly uNameKey = 'uName';
   private static readonly tokenKey = 'token';

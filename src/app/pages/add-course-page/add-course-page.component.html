@@ -5,30 +5,30 @@
         <app-spinner *ngIf="process" [subtext]="'Saving...'"></app-spinner>
       </div>
 
-      <form class="form" #form="ngForm" *ngIf="course" (ngSubmit)="saveChanges()">
+      <form class="form" #form="ngForm" *ngIf="course$ | async" (ngSubmit)="saveChanges()">
         <div class="control-group">
           <label>Title</label>
           <div class="control">
-            <input type="text" name="title" [(ngModel)]="course.title" required>
+            <input type="text" name="title" [value]="(course$ | async).title" (input)="updateStore($event.srcElement.value, 'title')" required>
           </div>
         </div>
         <div class="control-group">
           <label>Description</label>
           <div class="control">
-            <textarea name="description" [(ngModel)]="course.description" required></textarea>
+            <textarea name="description" [value]="(course$ | async).description" (input)="updateStore($event.srcElement.value, 'description')" required></textarea>
           </div>
         </div>
         <div class="control-group">
           <label>Date</label>
           <div class="control">
-            <input type="date" name="creationDate" [value]="course.creationDate | date:'yyyy-MM-dd'" readonly>
+            <input type="date" name="creationDate" [value]="(course$ | async).creationDate" [value]="(course$ | async).creationDate | date:'yyyy-MM-dd'" (input)="updateStore($event.srcElement.value, 'creationDate')" readonly>
           </div>
         </div>
         <div class="control-group">
           <label>Duration</label>
           <div class="control">
-            <input type="number" name="durationMin" [(ngModel)]="course.durationMin" pattern="[^\D0]+" required>
-            <span class="duration-formatteable">{{course.durationMin | duration}}</span>
+            <input type="number" name="durationMin" [value]="(course$ | async).durationMin" pattern="[^\D0]+" (input)="updateStore($event.srcElement.value, 'durationMin')" required>
+            <span class="duration-formatteable">{{(course$ | async).durationMin | duration}}</span>
           </div>
         </div>
         <div class="buttons-group">

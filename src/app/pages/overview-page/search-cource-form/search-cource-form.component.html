@@ -6,8 +6,7 @@
       type="search"
       name="search"
       placeholder="Name, segment or date"
-      [(ngModel)]="segment"
-      (input)="onSearch()"
+      (input)="onSearch($event)"
     >
   </form>
 </div>
