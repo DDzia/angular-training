@@ -1,5 +1,8 @@
-import { Component, EventEmitter, Output } from '@angular/core';
+import { Component } from '@angular/core';
+import { Store } from '@ngrx/store';
 
+import { AppState } from '../../../reducers';
+import { SearchAction } from '../../../actions';
 
 @Component({
   selector: 'app-search-cource-form',
@@ -7,17 +10,15 @@ import { Component, EventEmitter, Output } from '@angular/core';
   styleUrls: ['./search-cource-form.component.scss']
 })
 export class SearchCourceFormComponent {
-  @Output() readonly search = new EventEmitter<string>();
-
-  private segmentInternal = '';
-  set segment(value: string) {
-    this.segmentInternal = value == null ? '' : value;
-  }
-  get segment() {
-    return this.segmentInternal;
+  constructor(private readonly store: Store<AppState>) {
   }
 
-  onSearch() {
-    this.search.emit(this.segmentInternal);
+  onSearch(evt: Event) {
+    const source = evt.srcElement as HTMLInputElement;
+
+    this.store.dispatch({
+      type: SearchAction.searchChanges,
+      payload: source.value || ''
+    });
   }
 }

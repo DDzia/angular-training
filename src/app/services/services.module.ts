@@ -9,7 +9,6 @@ import { OrderByPipe } from './order-by-pipe';
 import { TruncateTextPipe } from './truncate-text-pipe';
 import { RemoteAuthService } from './auth-service';
 import { RemoteCoursesService } from './remote-courses-service';
-import { AuthStorageService } from './auth-storage';
 import { TokenInterceptor } from './token-interceptor';
 import { OverlayService } from './overlay';
 
@@ -35,7 +34,6 @@ import { OverlayService } from './overlay';
     DurationPipe,
     OrderByPipe,
     TruncateTextPipe,
-    AuthStorageService,
     {
       provide: HTTP_INTERCEPTORS,
       useClass: TokenInterceptor,

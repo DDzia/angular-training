@@ -1,12 +1,14 @@
-import { BehaviorSubject, from, Subscription } from 'rxjs';
-import { tap, switchMap } from 'rxjs/operators';
-
+import { from, Subscription, Observable, Subject } from 'rxjs';
+import { tap, switchMap, first, map, multicast } from 'rxjs/operators';
+import { Store } from '@ngrx/store';
 import { Component, OnInit, NgZone, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 
 import { ICourse } from '../../models';
 import { CoursesService } from '../../contracts';
 import { IBreadcrumb } from '../../components';
+import { AppState } from '../../reducers';
+import { EditCourseAction, NewCourseAction } from '../../actions';
 
 
 @Component({
@@ -17,66 +19,63 @@ import { IBreadcrumb } from '../../components';
 export class CoursePageComponent implements OnInit, OnDestroy {
   breadcrumbs?: IBreadcrumb[] = [];
   process = false;
-  course?: ICourse;
+  private courseInternal?: ICourse;
 
-  private readonly courseId = new BehaviorSubject<number>(0);
-  private origin = new BehaviorSubject<ICourse | undefined>(undefined);
-
-  private routeParamsSubscription: Subscription;
-  private courseIdSubscription: Subscription;
-  private originSubscription: Subscription;
+  private courseId$: Observable<number>;
+  private course$: Observable<ICourse | undefined>;
 
   constructor(private readonly courseSrv: CoursesService,
               private readonly route: ActivatedRoute,
               private readonly zone: NgZone,
-              private readonly router: Router) {
+              private readonly router: Router,
+              private readonly store: Store<AppState>) {
   }
 
   ngOnInit() {
-    this.routeParamsSubscription = this.route.paramMap
-    .subscribe(p => this.courseId.next(Number(p.get('id'))));
-
-    this.courseIdSubscription = this.courseId
+    this.course$ = this.store.select((x) => x.editCourse)
     .pipe(
-      tap(() => this.origin.next(undefined)),
-      switchMap((id) => from(this.courseSrv.getById(id))),
-    )
-    .subscribe(this.origin);
+      tap((x) => {
+        if (x) {
+          this.cloneOrigin(x);
+          this.breadcrumbs = [
+            {
+              title: 'Home',
+              url: ''
+            },
+            {
+              title: x.title
+            }
+          ];
+        } else {
+          this.process = false;
+          this.breadcrumbs = undefined;
+          this.courseInternal = undefined;
+        }
+      })
+    );
 
-    this.originSubscription = this.origin
-    .subscribe((x) => {
-      if (x) {
-        this.cloneOrigin(x);
-        this.breadcrumbs = [
-          {
-            title: 'Home',
-            url: ''
-          },
-          {
-            title: x.title
-          }
-        ];
-      } else {
-        this.process = false;
-        this.breadcrumbs = undefined;
-        this.course = undefined;
-      }
-    });
+    this.courseId$ = this.route.paramMap
+    .pipe(
+      map((p) => Number(p.get('id'))),
+      first(),
+    );
+
+    this.courseId$
+    .pipe(
+      switchMap((id) => from(this.courseSrv.getById(id))),
+      first()
+    )
+    .subscribe((x) => this.store.dispatch({ type: EditCourseAction.updateExistCourse, payload: x }));
   }
 
   ngOnDestroy(): void {
-    this.routeParamsSubscription.unsubscribe();
-    this.courseIdSubscription.unsubscribe();
-    this.originSubscription.unsubscribe();
-
-    this.courseId.unsubscribe();
-    this.origin.unsubscribe();
+    this.store.dispatch({ type: EditCourseAction.resetEditCourse });
   }
 
   saveChanges() {
     this.process = true;
 
-    this.zone.runOutsideAngular(async () => await this.courseSrv.update(this.course))
+    this.zone.runOutsideAngular(async () => await this.courseSrv.update(this.courseInternal))
       .then(() => this.goToList());
   }
 
@@ -87,6 +86,16 @@ export class CoursePageComponent implements OnInit, OnDestroy {
   private cloneOrigin(o: ICourse) {
     const clone: any = {...o};
     (clone as ICourse).creationDate = new Date();
-    this.course = clone;
+    this.courseInternal = clone;
+  }
+
+  updateStore(value: any, property: string) {
+    this.store.dispatch({
+      type: NewCourseAction.updateNewCourse,
+      payload: {
+        ...this.courseInternal,
+        [property]: value
+      }
+    });
   }
 }

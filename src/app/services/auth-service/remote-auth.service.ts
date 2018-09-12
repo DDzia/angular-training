@@ -1,28 +1,29 @@
 import { Injectable, Inject } from '@angular/core';
+import { Store } from '@ngrx/store';
+import { HttpClient } from '@angular/common/http';
+import { BehaviorSubject } from 'rxjs';
 
 import { AuthService } from '../../contracts';
-import { HttpClient } from '@angular/common/http';
-import { AuthStorageService } from '../auth-storage';
-import { BehaviorSubject } from 'rxjs';
 import { OverlayService } from '../overlay';
+import { AppState } from '../../reducers';
+import { AuthAction } from '../../actions';
+import { map } from 'rxjs/operators';
 
 @Injectable()
 export class RemoteAuthService extends AuthService {
-  authenticated$ = new BehaviorSubject(false);
   userInfo$ = new BehaviorSubject<string | undefined>(undefined);
 
   constructor(@Inject('remoteHost') private readonly remoteHost: string,
               private readonly http: HttpClient,
-              private authStore: AuthStorageService,
+              private readonly store: Store<AppState>,
               private readonly overlay: OverlayService) {
     super();
 
-    const info = authStore.getInfo();
-
-    if (info) {
-      this.userInfo$.next(info.userName);
-      this.authenticated$.next(true);
-    }
+    store.select((state) => state.authInfo)
+    .pipe(
+      map((x) => x ? x.userName : undefined)
+    )
+    .subscribe(this.userInfo$);
   }
 
   async login(userName: string, password: string) {
@@ -39,10 +40,13 @@ export class RemoteAuthService extends AuthService {
 
       const token = response.token as string;
 
-      this.authStore.setInfo(userName, token);
-
-      this.userInfo$.next(userName);
-      this.authenticated$.next(true);
+      this.store.dispatch({
+        type: AuthAction.logined,
+        payload: {
+          userName,
+          token
+        }
+      });
 
       return true;
     } catch (err) {
@@ -55,17 +59,14 @@ export class RemoteAuthService extends AuthService {
   async logout() {
     try {
       this.overlay.visible$.next(true);
-      this.authStore.cleanUp();
-
-      this.authenticated$.next(false);
-      this.userInfo$.next(undefined);
+      this.store.dispatch({ type: AuthAction.logouted });
     } finally {
       this.overlay.visible$.next(false);
     }
   }
 
   async getUserInfo() {
-    if (!this.authenticated) {
+    if (!this.userInfo$.getValue()) {
       throw new Error('User is not authentiticated.');
     }
 
