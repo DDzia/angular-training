@@ -10,7 +10,7 @@ import { TruncateTextPipe } from './truncate-text-pipe';
 import { RemoteAuthService } from './auth-service';
 import { RemoteCoursesService } from './remote-courses-service';
 import { TokenInterceptor } from './token-interceptor';
-import { OverlayService } from './overlay';
+import { OverlayService, OverlayInterceptor } from './overlay';
 
 
 @NgModule({
@@ -39,7 +39,11 @@ import { OverlayService } from './overlay';
       useClass: TokenInterceptor,
       multi: true
     },
-    { provide: OverlayService, useFactory: () => OverlayService.instance }
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: OverlayInterceptor,
+      multi: true
+    },
   ],
   exports: [
     DurationPipe,
@@ -54,8 +58,9 @@ export class ServicesModule {
       ngModule: ServicesModule,
       providers: [
         {
-          provide: AuthService, useClass: RemoteAuthService
-        }
+          provide: AuthService, useClass: RemoteAuthService,
+        },
+        OverlayService
       ]
     };
   }
