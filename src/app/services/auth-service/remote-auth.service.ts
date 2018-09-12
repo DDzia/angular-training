@@ -4,7 +4,6 @@ import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject } from 'rxjs';
 
 import { AuthService } from '../../contracts';
-import { OverlayService } from '../overlay';
 import { AppState } from '../../reducers';
 import { AuthAction } from '../../actions';
 import { map } from 'rxjs/operators';
@@ -15,8 +14,7 @@ export class RemoteAuthService extends AuthService {
 
   constructor(@Inject('remoteHost') private readonly remoteHost: string,
               private readonly http: HttpClient,
-              private readonly store: Store<AppState>,
-              private readonly overlay: OverlayService) {
+              private readonly store: Store<AppState>) {
     super();
 
     store.select((state) => state.authInfo)
@@ -30,8 +28,6 @@ export class RemoteAuthService extends AuthService {
     const url = `${this.remoteHost}/auth/login`;
 
     try {
-      this.overlay.visible$.next(true);
-
       const response = await this.http.post<any>(
         url,
         { login: userName, password }
@@ -51,18 +47,11 @@ export class RemoteAuthService extends AuthService {
       return true;
     } catch (err) {
       return false;
-    } finally {
-      this.overlay.visible$.next(false);
     }
   }
 
   async logout() {
-    try {
-      this.overlay.visible$.next(true);
-      this.store.dispatch({ type: AuthAction.logouted });
-    } finally {
-      this.overlay.visible$.next(false);
-    }
+    this.store.dispatch({ type: AuthAction.logouted });
   }
 
   async getUserInfo() {
@@ -71,14 +60,10 @@ export class RemoteAuthService extends AuthService {
     }
 
     try {
-      this.overlay.visible$.next(true);
-
       const url = `${this.remoteHost}/auth/userinfo`;
       return (await this.http.post<any>(url, null).toPromise()).login as string;
     } catch {
       throw new Error('User is not authentiticated.');
-    } finally {
-      this.overlay.visible$.next(false);
     }
   }
 }
