@@ -14,8 +14,8 @@ import { NoDataForEmptyDirective } from './no-data-for-empty-directive';
 import { ServicesModule } from '../services';
 import { SpinnerComponent } from './spinner';
 import { OverlayLayoutComponent } from './overlay-layout';
-
-
+import { DateControlComponent } from './date-control';
+import { RemoteAuthorsComponent } from './remote-authors';
 
 @NgModule({
   imports: [
@@ -36,6 +36,8 @@ import { OverlayLayoutComponent } from './overlay-layout';
     NoDataForEmptyDirective,
     SpinnerComponent,
     OverlayLayoutComponent,
+    DateControlComponent,
+    RemoteAuthorsComponent
   ],
   providers: [
     DatePipe
@@ -47,7 +49,9 @@ import { OverlayLayoutComponent } from './overlay-layout';
     CourseListItemComponent,
     FreshCourseSelectionDirective,
     NoDataForEmptyDirective,
-    OverlayLayoutComponent
+    OverlayLayoutComponent,
+    DateControlComponent,
+    RemoteAuthorsComponent
   ]
 })
 export class ComponentsModule { }
