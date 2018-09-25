@@ -1,19 +1,15 @@
 import { Component, NgZone } from '@angular/core';
 import { Router } from '@angular/router';
-import { Store } from '@ngrx/store';
-import { Observable } from 'rxjs';
-import { tap } from 'rxjs/operators';
+import { FormGroup, FormControl, Validators } from '@angular/forms';
 
-import { ICourse } from '../../models';
+import { IBreadcrumb, dateFormatValidator, positiveNumbersValidator } from '../../components';
+
 import { CoursesService } from '../../contracts';
-import { IBreadcrumb } from '../../components';
-import { AppState } from '../../reducers';
-import { NewCourseAction } from '../../actions';
 
 @Component({
   selector: 'app-course-page',
   templateUrl: './add-course-page.component.html',
-  styleUrls: ['./add-course-page.component.scss']
+  styleUrls: ['./add-course-page.component.scss'],
 })
 export class AddCoursePageComponent {
   breadcrumbs?: IBreadcrumb[] = [
@@ -31,38 +27,51 @@ export class AddCoursePageComponent {
     }
   ];
   process = false;
-  course$: Observable<ICourse>;
 
-  private courseInternal?: ICourse;
+  readonly fm: FormGroup;
 
   constructor(private readonly courseSrv: CoursesService,
               private readonly zone: NgZone,
-              private readonly router: Router,
-              private readonly store: Store<AppState>) {
-      this.course$ = store.select((x) => x.newCourse)
-      .pipe(
-        tap((x) => this.courseInternal = x)
-      );
+              private readonly router: Router) {
+
+    this.fm = new FormGroup({
+      title: new FormControl(
+        '', [
+          Validators.required,
+          Validators.max(50)
+        ]
+      ),
+      description: new FormControl(
+        '', [
+          Validators.required,
+          Validators.max(500),
+        ]
+      ),
+      creationDate: new FormControl(
+        null, [
+          Validators.required,
+          dateFormatValidator
+        ]
+      ),
+      durationMin: new FormControl(
+        null, [
+          Validators.required,
+          positiveNumbersValidator
+        ]
+      ),
+      authors: new FormControl(null, Validators.required)
+    });
   }
 
   saveChanges() {
     this.process = true;
-    this.zone.runOutsideAngular(async () => await this.courseSrv.create(this.courseInternal))
-      .then(() => this.store.dispatch({ type: NewCourseAction.resetNewCourse }))
+
+    this.zone.runOutsideAngular(async () => await this.courseSrv.create(this.fm.value))
       .then(() => this.goToList());
   }
 
   goToList() {
     this.router.navigate(['courses']);
   }
-
-  updateStore(value: any, property: string) {
-    this.store.dispatch({
-      type: NewCourseAction.updateNewCourse,
-      payload: {
-        ...this.courseInternal,
-        [property]: value
-      }
-    });
-  }
 }
+

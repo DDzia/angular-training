@@ -1,0 +1,13 @@
+<ng-container *ngIf="settedAuthors && settedAuthors.length">
+  <span class="author-setted" *ngFor="let author of settedAuthors">
+    <span class="name">{{author.name}}</span>
+    <span class="remove" (click)="remove(author)">x</span>
+  </span>
+</ng-container>
+<input type="text" (input)="search($event.target.value)">
+
+<ng-container *ngIf="authorsFound && authorsFound.length && !request">
+  <div class="authors-found">
+    <div class="author" *ngFor="let a of authorsFound" (click)="choseAuthor(a)">{{a.name}}</div>
+  </div>
+</ng-container>

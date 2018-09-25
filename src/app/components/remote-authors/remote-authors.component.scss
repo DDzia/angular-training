@@ -1,0 +1,43 @@
+:host {
+  position: relative;
+  border: 1px solid black;
+  display: inline-block;
+
+  .author-setted {
+    display: inline-block;
+    background-color: #eaeaea;
+    .remove {
+      display: inline-block;
+      font-weight: bold;
+      color: black;
+      padding: 2px;
+      cursor: pointer;
+    }
+  }
+
+  .author-setted+.author-setted {
+    margin-left: 4px;
+  }
+
+
+  input {
+    border: none;
+  }
+
+  .authors-found {
+    position: absolute;
+    top: calc(100% + 1px);
+    left: 0;
+    right: 0;
+    background-color: white;
+    max-height: 100px;
+    overflow-y: auto;
+    .author {
+      padding: 10px;
+      &:hover {
+        background-color: #f3f3f3;
+        cursor: pointer;
+      }
+    }
+  }
+}

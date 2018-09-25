@@ -30,7 +30,7 @@ export class RemoteCoursesService implements CoursesService {
   }
 
   create(courseNew: ICourse): Promise<ICourse> {
-    throw new Error('Method not implemented.');
+    return Promise.resolve(courseNew);
   }
 
   async getById(id: number) {
@@ -39,7 +39,7 @@ export class RemoteCoursesService implements CoursesService {
   }
 
   update(courseNew: ICourse): Promise<ICourse> {
-    throw new Error('Method not implemented.');
+    return Promise.resolve(courseNew);
   }
 
   remove(id: number) {
